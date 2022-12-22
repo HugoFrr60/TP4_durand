@@ -114,8 +114,12 @@ Flight::route('POST /login', function() {
     // Connexion de l'utilisateur
     $_SESSION['user'] = $user['Email'];
   
-    // Redirection vers la route /
-    Flight::redirect('/');
+    // display avec smarty index.tpl
+    $smarty = new Smarty();
+
+    $smarty->assign('username', $user['Email']);
+    $smarty->display('index.tpl');
+
   });
 
 //Exercice 3

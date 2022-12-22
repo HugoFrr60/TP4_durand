@@ -28,14 +28,17 @@ Flight::route('GET /success', function(){
 //Exercice 1
 // POST route /register
 Flight::route('POST /register', function() {
+    include ('db.php');
     $valid = true;
     // Récupérez les données du formulaire
     $name = Flight::request()->data['name'];
     $email = Flight::request()->data['email'];
     $password = Flight::request()->data['password'];
+    $city = Flight::request()->data['city'];
+    $country = Flight::request()->data['country'];
     // [ Conditions de validation ]
     // Vérifiez si les champs sont vides
-    if ($name == '' || $email == '' || $password == '') {
+    if ($name == '' || $email == '' || $password == '' || $city == '' || $country == '') {
         $valid = false;
     }
 
@@ -66,10 +69,10 @@ Flight::route('POST /register', function() {
     } else {
         // Si les champs ne sont pas vides, insérez les données dans la base de données
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO utilisateur (Nom, Email, Motdepasse) VALUES (:name, :email, :password)";
+        $sql = "INSERT INTO utilisateur (Nom, Email, Motdepasse, Ville, Pays) VALUES (:name, :email, :password, :city, :country )";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(['name' => $name, 'email' => $email, 'password' => $passwordHash]);
-        Flight::render('/success');
+        $stmt->execute(['name' => $name, 'email' => $email, 'password' => $passwordHash, 'city' => $city, 'country' => $country]);
+        Flight::redirect('/success');
     }
 
 });
@@ -77,6 +80,7 @@ Flight::route('POST /register', function() {
 //Exercice 2
 // Définition de la route POST /login
 Flight::route('POST /login', function() {
+    include ('db.php');
     // Récupération des données du formulaire
     $email = Flight::request()->data['email'];
     $password = Flight::request()->data['password'];
@@ -89,7 +93,7 @@ Flight::route('POST /login', function() {
     }
   
     // Vérification de l'existence de l'adresse email dans la table
-    $sql = "SELECT * FROM users WHERE email = :email";
+    $sql = "SELECT * FROM utilisateur WHERE Email = :email";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':email', $email);
     $stmt->execute();
@@ -101,14 +105,14 @@ Flight::route('POST /login', function() {
     }
   
     // Vérification du mot de passe
-    if (!password_verify($password, $user['password'])) {
+    if (!password_verify($password, $user['Motdepasse'])) {
       // Affichage du template login.tpl avec un message d'erreur
       Flight::render('login.tpl', array('error' => 'Le mot de passe est incorrect'));
       return;
     }
   
     // Connexion de l'utilisateur
-    $_SESSION['username'] = $user['username'];
+    $_SESSION['user'] = $user['Email'];
   
     // Redirection vers la route /
     Flight::redirect('/');

@@ -5,7 +5,7 @@
 <div id='main'>
 <p>Contenu du template register.tpl</p>
 
-<form action="/register" method="post">
+<form action="" method="post">
 <style>
   form {
   display: flex;

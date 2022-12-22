@@ -7,7 +7,7 @@
 <p>
 Contenu du Template login.tpl
 </p>
-<form action="/login" method="post">
+<form action="" method="post">
             <label for="nom">Nom</label><br>
             <input type="text" id="nom" name="nom" placeholder="Test" required><br>
             <label for="email">Email</label><br>
